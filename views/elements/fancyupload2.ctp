@@ -10,8 +10,6 @@ if (!isset($previewVersion)) {
 
 if (!isset($assocAlias)) {
 	$assocAlias = 'Attachment';
-} else {
-	$assocAlias = Inflector::singularize($assocAlias);
 }
 
 if (!isset($model)) {
@@ -48,7 +46,7 @@ window.addEvent('domready', function() {
 
 			// path to the SWF file
 			path: '".$this->Html->url("/mymedia/Swiff.Uploader.swf")."',
-			appendCookieData : true,
+			appendCookieData : false,
 			// remove that line to select all files, or edit it, add more items
 			typeFilter: {
 				'Images (*.jpg, *.jpeg, *.gif, *.png, *.pdf)': '*.jpg; *.jpeg; *.gif; *.png; *.pdf'
@@ -132,7 +130,7 @@ window.addEvent('domready', function() {
 					file.element.addClass('file-success');
 					var count = sortable.elements.length + 1;
 					var html = json.get('html').substitute({'i':count});
-					var newImage = new Element('div', {html:html, id:'Image'+count }).inject(gallery);
+					var newImage = new Element('div', {html:html, id:'$assocAlias'+count }).inject(gallery);
 					sortable.addItems(newImage);
 					newImage.fade('hide').fade('in');
 					file.element.fade('hide');//.chain(function(el){el.destroy()});
