@@ -21,11 +21,10 @@
  */
 
 //add an empty Attachment
-if (isset($this->data[$assocAlias][0]['basename'])) {
-	array_unshift($this->data[$assocAlias],array());
+if (isset($this->request->data[$assocAlias][0]['basename'])) {
+	array_unshift($this->request->data[$assocAlias], array());
 }
-
-$count = (isset($this->data[$assocAlias])) ? count($this->data[$assocAlias]) : 0;
+$count = (isset($this->request->data[$assocAlias]) && is_array(current($this->request->data[$assocAlias]))) ? count($this->request->data[$assocAlias]) : 0;
 $count++;
 ?>
 <fieldset class="tabbed">
@@ -60,7 +59,7 @@ $count++;
 			/*echo $form->hidden($assocAlias . '.0.model', array('value' => $model));
 			echo $form->hidden($assocAlias . '.0.group', array('value' => strtolower($assocAlias)));
 			echo $form->hidden($assocAlias . '.0.sort', array('value' => $count));*/
-			echo $form->input($assocAlias . '.0.file', array(
+			echo $this->Form->input($assocAlias . '.0.file', array(
 				'label' => __('File', true),
 				'type'  => 'file',
 				'error' => array(
@@ -74,7 +73,7 @@ $count++;
 					'extension'  => __('The file has the wrong extension.', true),
 					'mimeType'   => __('The file has the wrong MIME type.', true),
 			)));
-			echo $form->input($assocAlias . '.0.alternative', array(
+			echo $this->Form->input($assocAlias . '.0.alternative', array(
 				'label' => __('Textual replacement', true),
 				'value' => '',
 				'error' => __('A textual replacement must be provided.', true)
@@ -84,15 +83,22 @@ $count++;
 		<!-- Existing Attachments -->
 		<div class="existing" id="existing">
 		<?php
-		if (isset($this->data[$assocAlias])): ?>
-			<?php for($i = 1; $i < count($this->data[$assocAlias]); $i++) :?>
+		if (isset($this->request->data[$assocAlias]) && count($this->request->data[$assocAlias])): ?>
+			<?php for($i = 1; $i < count($this->request->data[$assocAlias]); $i++) :?>
+				<?php if (!isset($this->request->data[$assocAlias][$i])) {
+					echo 'Error';
+					if (!isset($errorHasOccured)) {
+						$errorHasOccured = 1;
+						$this->log(array($assocAlias, $this->data));
+					}
+				}?>
 			<div id="<?php echo $assocAlias.$i;?>">
 			<?php echo $this->element('existing', array(
 						'assocAlias'=>$assocAlias,
 						'previewVersion'=>$previewVersion,
 						'i'=>$i,
 						'model'=>$model,
-						'item'=>$this->data[$assocAlias][$i])
+						'item'=>$this->request->data[$assocAlias][$i])
 			);?>
 			</div>
 			<?php endfor ?>

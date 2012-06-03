@@ -1,6 +1,7 @@
 <?php
 $this->Html->script(array("/mootools/js/1.2.4.4-more.js","/mymedia/js/Swiff.Uploader.js", "/mymedia/js/FancyUpload2.js", "/mymedia/js/Fx.ProgressBar.js"), false);
 $this->Html->css('/mymedia/css/fancy.css', null, array('inline'=>false));
+App::uses('CakeSession', 'Model/Datasource');
 
 if (!isset($previewVersion)) {
 	$previewVersion = 'xxs';
@@ -42,7 +43,7 @@ window.addEvent('domready', function() {
 			timelimit:120,
 
 			// url is read from the form, so you just have to change one place
-			url: '".$this->Html->url(array('action'=>'fileupload', 'group'=> $assocAlias, $this->Session->id()))."',
+			url: '".$this->Html->url(array('action'=>'fileupload', 'group'=> $assocAlias, CakeSession::id()))."',
 
 			// path to the SWF file
 			path: '".$this->Html->url("/mymedia/Swiff.Uploader.swf")."',
@@ -165,5 +166,5 @@ window.addEvent('domready', function() {
 	});", array('inline'=>false));
 ?>
 <?php
-	echo $this->element('attachments', array('assocAlias'=>$assocAlias, 'previewVersion'=>$previewVersion, 'model'=>$model));
+	echo $this->element('Mymedia.attachments', array('assocAlias'=>$assocAlias, 'previewVersion'=>$previewVersion, 'model'=>$model));
 ?>
