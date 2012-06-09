@@ -51,7 +51,7 @@ $count++;
 		<!-- New Attachment -->
 		<div class="new">
 		<?php
-			echo $this->SuperForm->hide(array(
+			echo $this->Superform->hide(array(
 				'model'=>$model,
 				'group'=>strtolower($assocAlias),
 				'sort'=>$count

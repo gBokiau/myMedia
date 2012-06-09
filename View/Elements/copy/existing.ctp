@@ -1,7 +1,7 @@
 <?php
 	$prefix = $assocAlias . '.' . $i;
 	echo $this->Form->hidden($prefix.'.model', array('value' => $model));
-	echo $this->SuperForm->hide($item, array('prefix'=>$prefix, 'blacklist'=>array('model', 'status', 'delete', 'foreign_key', 'checksum', 'created', 'modified', 'file')));
+	echo $this->Superform->hide($item, array('prefix'=>$prefix, 'blacklist'=>array('model', 'status', 'delete', 'foreign_key', 'checksum', 'created', 'modified', 'file')));
 	if ($file = $this->Media->file("$previewVersion/img/{$item['basename']}")) {
 		echo $this->Media->embed($file, array(
 			'restrict' => array('image')
