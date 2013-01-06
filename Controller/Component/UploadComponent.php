@@ -34,11 +34,9 @@ class UploadComponent extends Component {
 			$item = $Attachment->read(null, $Attachment->id);
 			$this->Controller->set(array('assocAlias'=>$this->settings['assocAlias'], 'previewVersion'=>$this->settings['previewVersion'], 'i'=>'{i}', 'model'=>$Model->name,'item'=> $item[$attachmentAlias]));
 			$html = $this->Controller->render($this->settings['render'], false);
-			$this->log($html);
 			$return = array('status'=>"1", 'html'=>$html->body());
 		} else {
 			$errors = $this->Controler->validateErrors($Model->name);
-			$this->log($errors, 'fancy');
 			$return = array('status'=>"0", 'error'=>@$errors[$attachmentAlias][0]['file']);
 		}
 		$this->Controller->viewClass = "Json";
