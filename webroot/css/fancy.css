@@ -101,7 +101,7 @@ div.attachments.element {
 div.existing {
 	background:#f9f9f9;
 }
-.existing div {
+.existing>div {
 	display:inline-block;
 	border:1px solid #ccc;
 	padding:.2em;
@@ -111,12 +111,7 @@ div.existing {
 .existing img {
 cursor:move;
 }
-.existing div span {
-	display:none;
-}
-.existing div label {
-	display:inline;font-size:90%;line-height:1.5; padding-left:3px;color:#999;
-}
+
 .existing div.input {
 	float:none;
 	border:none;

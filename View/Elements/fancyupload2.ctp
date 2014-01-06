@@ -19,7 +19,24 @@ if (!isset($model)) {
 $modelId = $this->Form->value($model.'.id');
 $this->Html->scriptBlock("
 window.addEvent('domready', function() { 
-
+		var switches = $$('div.delete input[type=checkbox]').addEvent('click', function(event) {
+				var checked = this.get('checked');
+				var element = this.getParent().getParent();
+				if (checked) element.addClass('dodelete');
+				else element.removeClass('dodelete');
+			});
+		var onoffbuttons = $$('div.switch input[type=checkbox]').addEvent('click', function() {
+				var checked = this.get('checked');
+				var element = this.getParent().getElement('label');
+				var parent = this.getParent().getParent();
+				if (checked) {
+					element.addClass('btn-success');
+					parent.removeClass('off');
+				} else {
+					element.removeClass('btn-success');
+					parent.addClass('off');
+				}
+			});
 		var gallery = $$('.existing');
 		gallery = gallery[0];
 		
@@ -35,68 +52,68 @@ window.addEvent('domready', function() {
 			});			
 		});
 		
-		
-		
 		// our uploader instance 
 
-		var up = new FancyUpload2($('demo-status'), $('demo-list'), { // options object
-			timelimit:120,
+		var up = new FancyUpload2(
+			$('demo-status'), $('demo-list'),
+				{	timelimit: 120,
 
-			// url is read from the form, so you just have to change one place
-			url: '".$this->Html->url(array('action'=>'fileupload', 'group'=> $assocAlias, CakeSession::id()))."',
+					// url is read from the form, so you just have to change one place
+					url: '".$this->Html->url(array('action'=>'fileupload', 'group'=> $assocAlias, CakeSession::id()))."',
 
-			// path to the SWF file
-			path: '".$this->Html->url("/mymedia/Swiff.Uploader.swf")."',
-			appendCookieData : false,
-			// remove that line to select all files, or edit it, add more items
-			typeFilter: {
-				'Images (*.jpg, *.jpeg, *.gif, *.png, *.pdf)': '*.jpg; *.jpeg; *.gif; *.png; *.pdf'
-			},
-			data : 	{
-				'data[$model][id]' : '$modelId',
-				'data[$assocAlias][0][model]' : '$model',
-				'data[$assocAlias][0][group]' : '".strtolower($assocAlias)."',
-			},
+					// path to the SWF file
+					path: '".$this->Html->url("/mymedia/Swiff.Uploader.swf")."',
+
+					appendCookieData : false,
+					// remove that line to select all files, or edit it, add more items
+
+					typeFilter: {
+						'Images (*.jpg, *.jpeg, *.gif, *.png, *.pdf)': '*.jpg; *.jpeg; *.gif; *.png; *.pdf'
+					},
+
+					data : 	{
+						'data[$model][id]' : '$modelId',
+						'data[$assocAlias][0][model]' : '$model',
+						'data[$assocAlias][0][group]' : '".strtolower($assocAlias)."',
+					},
 			
-			// this is our browse button, *target* is overlayed with the Flash movie
-			target: 'demo-browse',
+					// this is our browse button, *target* is overlayed with the Flash movie
+					target: 'demo-browse',
 
-			// graceful degradation, onLoad is only called if all went well with Flash
-			onLoad: function() {
-				$('demo-status').removeClass('hide'); // we show the actual UI
-				$$('.new').destroy(); // ... and hide the plain form
+					// graceful degradation, onLoad is only called if all went well with Flash
+					onLoad: function() {
+						$('demo-status').removeClass('hide'); // we show the actual UI
+						$$('.new').destroy(); // ... and hide the plain form
 
-				// We relay the interactions with the overlayed flash to the link
-				this.target.addEvents({
-					click: function() {
-						return false;
+						// We relay the interactions with the overlayed flash to the link
+						this.target.addEvents({
+							click: function() {
+								return false;
+								},
+							mouseenter: function() {
+								this.addClass('hover');
+								},
+							mouseleave: function() {
+								this.removeClass('hover');
+								this.blur();
+								},
+							mousedown: function() {
+								this.focus();
+								}
+						});
+
+						// Interactions for the 2 other buttons
+						$('demo-clear').addEvent('click', function() {
+							up.remove(); // remove all files
+							return false;
+						});
+
+						$('demo-upload').addEvent('click', function() {
+							up.start(); // start upload
+							return false;
+						});
 					},
-					mouseenter: function() {
-						this.addClass('hover');
-					},
-					mouseleave: function() {
-						this.removeClass('hover');
-						this.blur();
-					},
-					mousedown: function() {
-						this.focus();
-					}
-				});
 
-				// Interactions for the 2 other buttons
-
-				$('demo-clear').addEvent('click', function() {
-					up.remove(); // remove all files
-					return false;
-				});
-
-				$('demo-upload').addEvent('click', function() {
-					up.start(); // start upload
-					return false;
-				});
-			},
-
-			// Edit the following lines, it is your custom event handling
 
 			/**
 			 * Is called when files were not added, files is an array of invalid File classes.
