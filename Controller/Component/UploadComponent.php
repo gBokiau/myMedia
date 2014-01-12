@@ -5,7 +5,7 @@ class UploadComponent extends Component {
 		'render' => '/Elements/existing',
 		'assocAlias'=>'Images',
 		'previewVersion'=>'s');
-	
+	public $sort = 0;
 	public function __construct(ComponentCollection $collection, $settings = array()) {
 		$settings = array_merge($this->settings, (array)$settings);
 		parent::__construct($collection, $settings);
@@ -15,29 +15,37 @@ class UploadComponent extends Component {
 		if ($controller->request->params['action'] == $this->settings['action']) {
 			$this->Controller = $controller;
 			$this->request = $controller->request;
-			return $this->fileupload();
+			if (method_exists($controller, 'prepareupload'))
+				return $controller->prepareupload();
+			return $this->prepareupload();
 		}
 	}
 
-	public function fileupload() {
+	public function prepareupload() {
 		$attachmentAlias = $this->request->params['named']['group'];
 		$Model = $this->_getObject();
 		$Attachment = $this->_getObject($Model->name . '.' . $attachmentAlias);
-		$this->request->data[$attachmentAlias][0]['file'] = $_FILES['Filedata'];
-		$sort = $Attachment->field('sort', array($attachmentAlias.'.foreign_key' => $this->request->data[$Model->name]['id']), $attachmentAlias.'.sort DESC');
-		$this->request->data[$attachmentAlias][0]['sort'] = $sort + 1;
+		$sort = $Attachment->field('sort', array($attachmentAlias.'.foreign_key' => $this->request->data[$Model->name]['id']), $attachmentAlias.'.sort DESC');		
+		$this->sort = $sort+1;
+		$this->fileupload($Model, $Attachment);
+	}
+
+	public function fileupload(Model $Model, Model $Attachment) {
+		$this->request->data[$Attachment->alias][0]['file'] = $_FILES['Filedata'];
+		$this->request->data[$Attachment->alias][0]['sort'] = $this->sort;
 		$Model->validate = array();
 		$Attachment->validate = array();
 		
 		if ($Model->saveAll($this->request->data, array('validate' => 'first'))) {
 			$Attachment->recursive = 0;
 			$item = $Attachment->read(null, $Attachment->id);
-			$this->Controller->set(array('assocAlias'=>$this->settings['assocAlias'], 'previewVersion'=>$this->settings['previewVersion'], 'i'=>'{i}', 'model'=>$Model->name,'item'=> $item[$attachmentAlias]));
+			$this->request->data = $Model->read();
+			$this->Controller->set(array('assocAlias'=>$this->settings['assocAlias'], 'previewVersion'=>$this->settings['previewVersion'], 'i'=>'{i}', 'model'=>$Model->name,'item'=> $item[$Attachment->alias]));
 			$html = $this->Controller->render($this->settings['render'], false);
 			$return = array('status'=>"1", 'html'=>$html->body());
 		} else {
 			$errors = $this->Controler->validateErrors($Model->name);
-			$return = array('status'=>"0", 'error'=>@$errors[$attachmentAlias][0]['file']);
+			$return = array('status'=>"0", 'error'=>@$errors[$Attachment->alias][0]['file']);
 		}
 		$this->Controller->viewClass = "Json";
 		$this->Controller->set($return + array('_serialize'=>array('html', 'status')));

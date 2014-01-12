@@ -93,7 +93,7 @@ $count++;
 					}
 				}?>
 			<div id="<?php echo $assocAlias.$i;?>">
-			<?php echo $this->element('existing', array(
+			<?php echo $this->element($element, array(
 						'assocAlias'=>$assocAlias,
 						'previewVersion'=>$previewVersion,
 						'i'=>$i,

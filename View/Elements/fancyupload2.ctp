@@ -12,34 +12,41 @@ if (!isset($previewVersion)) {
 if (!isset($assocAlias)) {
 	$assocAlias = 'Attachment';
 }
-
+if (!isset($element)) {
+	$element = 'existing';
+}
 if (!isset($model)) {
 	$model = $this->Form->model();
 }
 $modelId = $this->Form->value($model.'.id');
 $this->Html->scriptBlock("
 window.addEvent('domready', function() { 
-		var switches = $$('div.delete input[type=checkbox]').addEvent('click', function(event) {
-				var checked = this.get('checked');
-				var element = this.getParent().getParent();
-				if (checked) element.addClass('dodelete');
-				else element.removeClass('dodelete');
-			});
-		var onoffbuttons = $$('div.switch input[type=checkbox]').addEvent('click', function() {
-				var checked = this.get('checked');
-				var element = this.getParent().getElement('label');
-				var parent = this.getParent().getParent();
-				if (checked) {
-					element.addClass('btn-success');
-					parent.removeClass('off');
-				} else {
-					element.removeClass('btn-success');
-					parent.addClass('off');
-				}
-			});
+		var switches = function(element) {
+			$(element).getElements('div.delete input[type=checkbox]').addEvent('click',
+				function(event) {
+					var checked = this.get('checked');
+					var element = this.getParent().getParent();
+					if (checked) element.addClass('dodelete');
+					else element.removeClass('dodelete');
+			});}
+		var onoffbuttons = function(element){
+			$(element).getElements('div.switch input[type=checkbox]').addEvent('click',
+				function() {
+					var checked = this.get('checked');
+					var element = this.getParent().getElement('label');
+					var parent = this.getParent().getParent();
+					if (checked) {
+						element.addClass('btn-success');
+						parent.removeClass('off');
+					} else {
+						element.removeClass('btn-success');
+						parent.addClass('off');
+					}
+			});}
+		switches(document);
+		onoffbuttons(document);
 		var gallery = $$('.existing');
 		gallery = gallery[0];
-		
 		var sortable = new Sortables (gallery, {
 			'clone':true, 'opacity':'0', snap:6, handle:'img', revert:true, constrain:true
 		});
@@ -151,6 +158,8 @@ window.addEvent('domready', function() {
 					var newImage = new Element('div', {html:html, id:'$assocAlias'+count }).inject(gallery);
 					sortable.addItems(newImage);
 					newImage.fade('hide').fade('in');
+					onoffbuttons(newImage);
+					switches(newImage);
 					file.element.fade('hide');//.chain(function(el){el.destroy()});
 				} else {
 					file.element.addClass('file-failed');
@@ -183,5 +192,5 @@ window.addEvent('domready', function() {
 	});", array('inline'=>false));
 ?>
 <?php
-	echo $this->element('Mymedia.attachments', array('assocAlias'=>$assocAlias, 'previewVersion'=>$previewVersion, 'model'=>$model));
+	echo $this->element('Mymedia.attachments', array('assocAlias'=>$assocAlias, 'previewVersion'=>$previewVersion, 'model'=>$model, 'element'=>$element));
 ?>
