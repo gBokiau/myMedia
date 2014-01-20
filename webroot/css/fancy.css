@@ -87,7 +87,6 @@ a:hover, a.hover {
 	margin-left: 44px;
 	font-size: 0.9em;
 	line-height: 20px;
-	clear
 }
 #demo-list li.file .file-remove {
 	clear: right;
@@ -123,3 +122,55 @@ cursor:move;
 	margin:0;
 vertical-align:bottom;
 }
+
+.existing>div {
+	perspective: 1000;
+	-webkit-perspective: 1000;
+}
+	/* flip the pane when hovered */
+.existing>div.flipped {
+width:470px;
+}
+.existing>div.flipped .backside {
+	display: block;
+}
+.existing>div, .frontside, .backside {
+	width: 220px;
+	height: 260px;
+	transition:width .5s;
+	-webkit-transition: width .5s;
+}
+/* flip speed goes here */
+.flip {
+	position: relative;
+}
+
+/* hide back of pane during swap */
+.frontside, .backside {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+/* front pane, placed above back */
+.frontside {
+	z-index: 2;
+}
+
+/* back, initially hidden pane */
+.backside {
+left:230px;
+display:none;
+background: #f6f6f6;
+width:240px;
+border-left:1px solid #efefef;
+}
+.backside textarea {
+	width:200px !important;border-radius:4px;border:1px solid #bbb;padding:10px;font-size:1em;
+}
+.backside * {
+	margin:.5em;
+}
+.existing>div:not(.off):hover .invisible {opacity:1;}
+.hastext .glyphicon-edit.invisible {opacity:1; color:yellow;text-shadow: 0px 0px 2px #333;}
+#newsAdminEditForm .frontside a.btn {visibility: hidden !important;}
