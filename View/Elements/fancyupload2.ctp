@@ -15,6 +15,12 @@ if (!isset($assocAlias)) {
 if (!isset($element)) {
 	$element = 'existing';
 }
+if (!isset($before)) {
+	$before = '';
+}
+if (!isset($after)) {
+	$after = '';
+}
 if (!isset($model)) {
 	$model = $this->Form->model();
 }
@@ -25,7 +31,7 @@ window.addEvent('domready', function() {
 			$(element).getElements('div.delete input[type=checkbox]').addEvent('click',
 				function(event) {
 					var checked = this.get('checked');
-					var element = this.getParent().getParent();
+					var element = this.getParent().getParent().getParent().getParent();
 					if (checked) element.addClass('dodelete');
 					else element.removeClass('dodelete');
 			});}
@@ -50,7 +56,14 @@ window.addEvent('domready', function() {
 		var sortable = new Sortables (gallery, {
 			'clone':true, 'opacity':'0', snap:6, handle:'img', revert:true, constrain:true
 		});
-		
+		sortable.elements.each(function(el) {
+			var textfield = $(el.get('id') + 'Alternative');
+			if (textfield.value != '') {
+				el.addClass('flipped').addClass('hastext');
+			}
+			var editbutton = el.getElement('.glyphicon-edit').getParent();
+			editbutton.addEvent('click', function(e){e.stop();el.toggleClass('flipped');});
+		});
 		sortable.addEvent('complete', function(){
 			this.serialize(false, function(element, index){
 				$(element.getProperty('id')+'Sort').value = index+1;
@@ -192,5 +205,5 @@ window.addEvent('domready', function() {
 	});", array('inline'=>false));
 ?>
 <?php
-	echo $this->element('Mymedia.attachments', array('assocAlias'=>$assocAlias, 'previewVersion'=>$previewVersion, 'model'=>$model, 'element'=>$element));
+	echo $this->element('Mymedia.attachments', compact(array('assocAlias', 'previewVersion', 'model', 'element', 'before', 'after')));
 ?>

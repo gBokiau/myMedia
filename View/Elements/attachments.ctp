@@ -93,6 +93,7 @@ $count++;
 					}
 				}?>
 			<div id="<?php echo $assocAlias.$i;?>">
+			<?php echo $before;?>
 			<?php echo $this->element($element, array(
 						'assocAlias'=>$assocAlias,
 						'previewVersion'=>$previewVersion,
@@ -100,6 +101,7 @@ $count++;
 						'model'=>$model,
 						'item'=>$this->request->data[$assocAlias][$i])
 			);?>
+			<?php echo $after;?>
 			</div>
 			<?php endfor ?>
 		<?php endif ?>
