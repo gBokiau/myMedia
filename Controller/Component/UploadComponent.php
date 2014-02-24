@@ -24,8 +24,9 @@ class UploadComponent extends Component {
 	public function prepareupload() {
 		$attachmentAlias = $this->request->params['named']['group'];
 		$Model = $this->_getObject();
+		$id = $this->request->data[$Model->name]['id'];
 		$Attachment = $this->_getObject($Model->name . '.' . $attachmentAlias);
-		$sort = $Attachment->field('sort', array($attachmentAlias.'.foreign_key' => $this->request->data[$Model->name]['id']), $attachmentAlias.'.sort DESC');		
+		$sort = $Attachment->field('sort', array($attachmentAlias.'.foreign_key' => $id), $attachmentAlias.'.sort DESC');		
 		$this->sort = $sort+1;
 		$this->fileupload($Model, $Attachment);
 	}
