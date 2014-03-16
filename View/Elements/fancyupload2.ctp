@@ -67,7 +67,7 @@ window.addEvent('domready', function() {
 		sortable.addEvent('complete', function(){
 			this.serialize(false, function(element, index){
 				$(element.getProperty('id')+'Sort').value = index+1;
-				element.highlight();
+				element.getParent().highlight();
 				return element.getProperty('id');
 			});			
 		});
