@@ -20,12 +20,9 @@
  * @link       http://github.com/davidpersson/media
  */
 
-//add an empty Attachment
-if (isset($this->request->data[$assocAlias][0]['basename'])) {
-	array_unshift($this->request->data[$assocAlias], array());
-}
-$count = (isset($this->request->data[$assocAlias]) && is_array(current($this->request->data[$assocAlias]))) ? count($this->request->data[$assocAlias]) : 0;
-$count++;
+$count =
+	(isset($this->request->data[$assocAlias])) ?
+	count($this->request->data[$assocAlias]) : 0;
 ?>
 <fieldset class="tabbed">
 	<legend><?= Inflector::pluralize($assocAlias);?></legend>
@@ -55,11 +52,11 @@ $count++;
 				'model'=>$model,
 				'group'=>strtolower($assocAlias),
 				'sort'=>$count
-				), array('prefix'=>$assocAlias . '.0'));
+				), array('prefix'=>$assocAlias . '.' . $count));
 			/*echo $form->hidden($assocAlias . '.0.model', array('value' => $model));
 			echo $form->hidden($assocAlias . '.0.group', array('value' => strtolower($assocAlias)));
 			echo $form->hidden($assocAlias . '.0.sort', array('value' => $count));*/
-			echo $this->Form->input($assocAlias . '.0.file', array(
+			echo $this->Form->input($assocAlias . '.' . $count .'.file', array(
 				'label' => __('File', true),
 				'type'  => 'file',
 				'error' => array(
@@ -73,7 +70,7 @@ $count++;
 					'extension'  => __('The file has the wrong extension.', true),
 					'mimeType'   => __('The file has the wrong MIME type.', true),
 			)));
-			echo $this->Form->input($assocAlias . '.0.alternative', array(
+			echo $this->Form->input($assocAlias . '.' . $count .'.alternative', array(
 				'label' => __('Textual replacement', true),
 				'value' => '',
 				'error' => __('A textual replacement must be provided.', true)
@@ -84,7 +81,8 @@ $count++;
 		<div class="existing" id="existing">
 		<?php
 		if (isset($this->request->data[$assocAlias]) && count($this->request->data[$assocAlias])): ?>
-			<?php for($i = 1; $i < count($this->request->data[$assocAlias]); $i++) :?>
+			<?php foreach($this->request->data[$assocAlias] as $i=>$item) :?>
+			<div id="<?php echo $assocAlias.$i;?>"<?php if(array_key_exists('delete', $item) && $item['delete']) echo ' class="dodelete"';?>>
 				<?php if (!isset($this->request->data[$assocAlias][$i])) {
 					echo 'Error';
 					if (!isset($errorHasOccured)) {
@@ -92,18 +90,15 @@ $count++;
 						$this->log(array($assocAlias, $this->data));
 					}
 				}?>
-			<div id="<?php echo $assocAlias.$i;?>">
-			<?php echo $before;?>
 			<?php echo $this->element($element, array(
 						'assocAlias'=>$assocAlias,
 						'previewVersion'=>$previewVersion,
 						'i'=>$i,
 						'model'=>$model,
-						'item'=>$this->request->data[$assocAlias][$i])
+						'item'=>$item)
 			);?>
-			<?php echo $after;?>
 			</div>
-			<?php endfor ?>
+			<?php endforeach; ?>
 		<?php endif ?>
 		</div>
 	</div>
