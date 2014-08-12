@@ -44,7 +44,7 @@ class UploadComponent extends Component {
 			$html = $this->Controller->render($this->settings['render'], false);
 			$return = array('status'=>"1", 'html'=>$html->body());
 		} else {
-			$errors = $this->Controler->validateErrors($Model->name);
+			$errors = $this->Controller->validateErrors($Model->name);
 			$return = array('status'=>"0", 'error'=>@$errors[$Attachment->alias][0]['file']);
 		}
 		$this->Controller->viewClass = "Json";
